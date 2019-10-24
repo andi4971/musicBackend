@@ -30,6 +30,7 @@ namespace musicBackend
             services.AddControllers();
             services.AddDbContext<MusicContext>(options => 
             options.UseSqlite(Configuration.GetConnectionString("MusicDb")));
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,12 +40,14 @@ namespace musicBackend
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(x => x.AllowAnyOrigin());
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
