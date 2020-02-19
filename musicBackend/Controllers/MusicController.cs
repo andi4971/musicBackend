@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using musicBackend.Models;
 
 namespace musicBackend.Controllers
@@ -14,9 +16,11 @@ namespace musicBackend.Controllers
     public class MusicController : ControllerBase
     {
         private MusicContext db;
-        public MusicController(MusicContext db)
+        private IConfiguration config;
+        public MusicController(MusicContext db, IConfiguration config)
         {
             this.db = db;
+            this.config = config;
         }
         public IActionResult GetAudioStream(int songId)
         {
@@ -24,8 +28,8 @@ namespace musicBackend.Controllers
                 .Include(x => x.Album)
                 .Include(x => x.Album.Artist)
                 .FirstOrDefault(x => x.SongId == songId);
-            var path = $"{Properties.Resources.MusicFolderPath}{song.GetFilePath()}";
-            return File(System.IO.File.OpenRead(path), $"audio/{song.FileFormat.Substring(1)}");
+            var path = $"{config.GetValue<string>("musicFolderPath")}{song.GetFilePath()}";
+            return File(System.IO.File.OpenRead(path), $"audio/{song.FileFormat}");
         }
 
         public bool RefreshDatabase()
