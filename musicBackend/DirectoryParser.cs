@@ -9,9 +9,9 @@ namespace musicBackend
 {
     public class DirectoryParser
     {
-        public static bool RefreshDatabase(MusicContext db)
+        public static bool RefreshDatabase(MusicContext db, string path)
         {
-            var baseDir = new DirectoryInfo(Properties.Resources.MusicFolderPath);
+            var baseDir = new DirectoryInfo(path);
             var artists = new List<Artist>();
             var albums = new List<Album>();
             var songs = new List<Song>();

@@ -34,7 +34,7 @@ namespace musicBackend.Controllers
 
         public bool RefreshDatabase()
         {
-            return DirectoryParser.RefreshDatabase(db);
+            return DirectoryParser.RefreshDatabase(db,config.GetValue<string>("musicFolderPath"));
         }
         public List<Artist> GetArtists()
         {
