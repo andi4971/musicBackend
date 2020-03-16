@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Resources;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -31,10 +35,24 @@ namespace musicBackend.Controllers
             var path = $"{config.GetValue<string>("musicFolderPath")}{song.GetFilePath()}";
             return File(System.IO.File.OpenRead(path), $"audio/{song.FileFormat}");
         }
+        public FileResult GetAudioDownload(int songId)
+        {
+            var song = db.Songs
+               .Include(x => x.Album)
+               .Include(x => x.Album.Artist)
+               .FirstOrDefault(x => x.SongId == songId);
+            var path = $"{config.GetValue<string>("musicFolderPath")}{song.GetFilePath()}";
+            FileContentResult result = new FileContentResult(System.IO.File.ReadAllBytes(path), $"audio/{song.FileFormat}")
+            {
+                FileDownloadName = $"{song.Name}",
+                EnableRangeProcessing = true
+            };
 
+            return result;
+        }
         public bool RefreshDatabase()
         {
-            return DirectoryParser.RefreshDatabase(db,config.GetValue<string>("musicFolderPath"));
+            return DirectoryParser.RefreshDatabase(db, config.GetValue<string>("musicFolderPath"));
         }
         public List<Artist> GetArtists()
         {
