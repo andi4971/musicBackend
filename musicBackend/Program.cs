@@ -20,8 +20,13 @@ namespace musicBackend
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("https://0.0.0.0:5000","https://localhost:5001");
+                    webBuilder.UseUrls("https://0.0.0.0:5000", "https://localhost:5001");
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseKestrel(options => {
+                        options.Limits.MaxRequestBodySize = null;
+                        options.Limits.MaxRequestBufferSize = null;
+                        options.Limits.MaxResponseBufferSize = null;
+                        });
                 });
     }
 }
