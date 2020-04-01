@@ -26,14 +26,13 @@ namespace musicBackend.Controllers
             this.db = db;
             this.config = config;
         }
-        public string GetAudioStream(int songId)
+        public string GetAudioAsBase64(int songId)
         {
             var song = db.Songs
                 .Include(x => x.Album)
                 .Include(x => x.Album.Artist)
                 .FirstOrDefault(x => x.SongId == songId);
             var path = $"{config.GetValue<string>("musicFolderPath")}{song.GetFilePath()}";
-
             byte[] bytes = System.IO.File.ReadAllBytes(path);
             return  Convert.ToBase64String(bytes);
         }
@@ -47,10 +46,10 @@ namespace musicBackend.Controllers
             var path = $"{config.GetValue<string>("musicFolderPath")}{song.GetFilePath()}";
             FileContentResult result = new FileContentResult(System.IO.File.ReadAllBytes(path), $"audio/{song.FileFormat}")
             {
-                //FileDownloadName = $"{song.Name}",
+                FileDownloadName = $"{song.Name}",
                 EnableRangeProcessing = true
             };
-            return File(System.IO.File.ReadAllBytes(path),"audio/flac");
+            return result;
         }
         public bool RefreshDatabase()
         {
